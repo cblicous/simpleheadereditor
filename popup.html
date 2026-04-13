@@ -20,10 +20,22 @@
       padding: 16px;
     }
 
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 4px;
+    }
+
+    .header svg {
+      width: 32px;
+      height: 32px;
+      flex-shrink: 0;
+    }
+
     h1 {
       font-size: 15px;
       font-weight: 600;
-      margin-bottom: 4px;
       color: #ffffff;
     }
 
@@ -91,7 +103,17 @@
   </style>
 </head>
 <body>
-  <h1>Simple Header Editor</h1>
+  <div class="header">
+    <svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+      <rect x="8" y="8" width="112" height="112" rx="16" fill="#1e1e1e"/>
+      <!-- JSON Brackets -->
+      <text x="32" y="78" font-size="64" fill="#4FC3F7" font-family="monospace">{</text>
+      <text x="70" y="78" font-size="64" fill="#4FC3F7" font-family="monospace">}</text>
+      <!-- Edit Pen -->
+      <rect x="54" y="40" width="20" height="8" transform="rotate(45 64 64)" fill="#ffffff"/>
+    </svg>
+    <h1>Simple Header Editor</h1>
+  </div>
   <p class="subtitle">Edit the JSON array below to configure request header injection per domain.</p>
 
   <textarea id="config" spellcheck="false" placeholder="Loading…"></textarea>
