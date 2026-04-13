@@ -1,0 +1,20 @@
+{
+  "manifest_version": 3,
+  "name": "Simple Header Editor",
+  "version": "1.0.0",
+  "description": "Inject custom HTTP request headers based on domain patterns configured via JSON.",
+  "permissions": [
+    "declarativeNetRequest",
+    "storage"
+  ],
+  "host_permissions": [
+    "<all_urls>"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  },
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Simple Header Editor"
+  }
+}
