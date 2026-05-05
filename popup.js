@@ -7,7 +7,14 @@ const EXAMPLE_CONFIG = [
   {
     "domain": "api.github.com",
     "header-name": "x-debug-mode",
-    "header-value": "true"
+    "header-value": "true",
+    "active": true
+  },
+  {
+    "domain": "staging.example.com",
+    "header-name": "x-internal-flag",
+    "header-value": "off",
+    "active": false
   }
 ];
 
@@ -43,6 +50,9 @@ function validate(parsed) {
     }
     if (typeof item["header-value"] !== "string") {
       return `Item at index ${i} is missing a "header-value" field.`;
+    }
+    if (item.active !== undefined && typeof item.active !== "boolean") {
+      return `Item at index ${i}: "active" must be true or false if present.`;
     }
   }
   return null;

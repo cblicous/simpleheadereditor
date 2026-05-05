@@ -29,7 +29,7 @@ Rule application is always a full replace: all existing dynamic rules are remove
 
 ## Config schema
 
-The stored value (`headerRules`) is a JSON array of objects with three required string fields: `domain`, `header-name`, and `header-value`. Domain patterns like `*.example.com` and `example.com` are equivalent — the `*.` prefix is stripped before building the URL filter.
+The stored value (`headerRules`) is a JSON array of objects with three required string fields (`domain`, `header-name`, `header-value`) plus one optional boolean field (`active`, defaults to `true`). When `active` is `false`, the rule is filtered out in `configToRules()` before being passed to `declarativeNetRequest`. Domain patterns like `*.example.com` and `example.com` are equivalent — the `*.` prefix is stripped before building the URL filter.
 
 ## Key constraints
 

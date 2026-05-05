@@ -54,7 +54,14 @@ The config is a JSON **array** of rule objects. Each rule has three fields:
   {
     "domain": "api.example.com",
     "header-name": "x-debug-mode",
-    "header-value": "true"
+    "header-value": "true",
+    "active": true
+  },
+  {
+    "domain": "staging.example.com",
+    "header-name": "x-internal-flag",
+    "header-value": "off",
+    "active": false
   }
 ]
 ```
@@ -64,6 +71,7 @@ The config is a JSON **array** of rule objects. Each rule has three fields:
 | `domain` | string | Domain pattern to match (see below) |
 | `header-name` | string | HTTP header name to inject (case-insensitive) |
 | `header-value` | string | Value for the header |
+| `active` | boolean | Optional. `false` disables the rule without deleting it. Defaults to `true` when omitted. |
 
 ### Domain matching
 

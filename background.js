@@ -14,24 +14,26 @@ function domainToUrlFilter(domain) {
 }
 
 function configToRules(configItems) {
-  return configItems.map((item, index) => ({
-    id: index + 1, // rule IDs must be positive integers
-    priority: 1,
-    action: {
-      type: "modifyHeaders",
-      requestHeaders: [
-        {
-          header: item["header-name"].toLowerCase(),
-          operation: "set",
-          value: item["header-value"]
-        }
-      ]
-    },
-    condition: {
-      urlFilter: domainToUrlFilter(item["domain"]),
-      resourceTypes: ALL_RESOURCE_TYPES
-    }
-  }));
+  return configItems
+    .filter(item => item.active !== false)
+    .map((item, index) => ({
+      id: index + 1, // rule IDs must be positive integers
+      priority: 1,
+      action: {
+        type: "modifyHeaders",
+        requestHeaders: [
+          {
+            header: item["header-name"].toLowerCase(),
+            operation: "set",
+            value: item["header-value"]
+          }
+        ]
+      },
+      condition: {
+        urlFilter: domainToUrlFilter(item["domain"]),
+        resourceTypes: ALL_RESOURCE_TYPES
+      }
+    }));
 }
 
 async function applyRules(configItems) {
