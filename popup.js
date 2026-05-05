@@ -58,6 +58,14 @@ function validate(parsed) {
   return null;
 }
 
+function ruleCountSummary(rules) {
+  const active = rules.filter(r => r.active !== false).length;
+  if (active === rules.length) {
+    return `${rules.length} rule(s) active.`;
+  }
+  return `${rules.length} rule(s) loaded, ${active} active.`;
+}
+
 // Load existing config from storage and populate the textarea
 chrome.storage.sync.get("headerRules", (result) => {
   if (chrome.runtime.lastError) {
@@ -67,7 +75,7 @@ chrome.storage.sync.get("headerRules", (result) => {
   const rules = result.headerRules;
   if (Array.isArray(rules)) {
     textarea.value = JSON.stringify(rules, null, 2);
-    showStatus(`${rules.length} rule(s) active.`, "info");
+    showStatus(ruleCountSummary(rules), "info");
   } else {
     // First launch: show example config
     textarea.value = JSON.stringify(EXAMPLE_CONFIG, null, 2);
@@ -107,6 +115,6 @@ saveBtn.addEventListener("click", () => {
     }
     // Pretty-print after successful save
     textarea.value = JSON.stringify(parsed, null, 2);
-    showStatus(`Saved. ${parsed.length} rule(s) active.`, "success");
+    showStatus(`Saved. ${ruleCountSummary(parsed)}`, "success");
   });
 });
