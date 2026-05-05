@@ -1,6 +1,6 @@
 # Simple Header Editor
 
-A Chrome browser extension that injects custom HTTP request headers based on domain patterns. Rules are configured via a JSON array edited directly in the extension popup.
+A browser extension for **Chrome** and **Firefox** (Manifest V3) that injects custom HTTP request headers based on domain patterns. Rules are configured via a JSON array edited directly in the extension popup.
 
 ---
 
@@ -14,11 +14,29 @@ Use cases include: passing authentication tokens to local APIs, setting debug fl
 
 ## Installation
 
-1. Clone or download this repository.
-2. Open Chrome and navigate to `chrome://extensions`.
-3. Enable **Developer mode** (toggle in the top-right corner).
-4. Click **Load unpacked** and select the folder containing `manifest.json`.
-5. The extension icon appears in the Chrome toolbar. Click it to open the config editor.
+The extension ships per-browser bundles. First, build them:
+
+```bash
+./build.sh all          # builds both targets
+./build.sh chrome       # or just one
+./build.sh firefox
+```
+
+This produces `dist/chrome/`, `dist/firefox/`, and matching zip files for store submission.
+
+### Chrome
+
+1. Open `chrome://extensions` and enable **Developer mode** (top-right toggle).
+2. Click **Load unpacked** and select `dist/chrome/`.
+
+### Firefox
+
+1. Open `about:debugging#/runtime/this-firefox`.
+2. Click **Load Temporary Add-on…** and select `dist/firefox/manifest.json`.
+
+Temporary add-ons are removed when Firefox restarts. For a persistent install, the zip needs to be signed via [addons.mozilla.org](https://addons.mozilla.org/).
+
+> After editing source files, re-run `./build.sh` and reload the extension on the relevant `chrome://extensions` or `about:debugging` page.
 
 ---
 
@@ -112,10 +130,16 @@ Errors are shown in red below the Save button. A green confirmation message appe
 
 | File | Role |
 |---|---|
-| `manifest.json` | Extension manifest (MV3). Declares permissions, service worker, and popup. |
-| `background.js` | Service worker. Converts stored config into `declarativeNetRequest` dynamic rules. |
+| `manifest.chrome.json` | Chrome MV3 manifest. Uses `background.service_worker`. |
+| `manifest.firefox.json` | Firefox MV3 manifest. Uses `background.scripts` and declares the `gecko` ID required for `storage.sync`. |
+| `background.js` | Background script. Converts stored config into `declarativeNetRequest` dynamic rules. Runs as a service worker in Chrome and as an event-page script in Firefox. |
 | `popup.html` | Editor UI shell. Contains the textarea, Save button, and status area. |
 | `popup.js` | Editor logic. Reads config from storage on open, validates on save, writes back to storage. |
+| `build.sh` | Assembles `dist/chrome/` and `dist/firefox/` from the shared sources, picking the matching manifest. |
+
+### Why two manifests?
+
+Chrome MV3 requires `background.service_worker` and rejects `background.scripts`. Firefox MV3 doesn't support `service_worker` at all and uses `background.scripts`. A single manifest can't satisfy both reliably (Firefox's behavior with both keys present has changed across versions), so each target gets its own.
 
 ### Permissions
 
@@ -133,7 +157,7 @@ Errors are shown in red below the Save button. A green confirmation message appe
 
 **`chrome.storage.sync`**: Config is stored in sync storage so it is available across Chrome profiles signed into the same Google account. The practical size limit is 8KB per item / 100KB total, which comfortably fits hundreds of rules.
 
-**No build step**: The extension is plain HTML, CSS, and JavaScript with no bundler or transpiler. Load it directly from the source directory.
+**Minimal build step**: The extension is plain HTML, CSS, and JavaScript — no bundler, transpiler, or test framework. `build.sh` is just a file-copy script that picks the per-browser manifest and zips the result; there is no compilation.
 
 ---
 

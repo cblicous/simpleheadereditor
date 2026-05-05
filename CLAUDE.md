@@ -4,11 +4,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project overview
 
-Simple Header Editor is a Chrome Extension (Manifest V3) that injects custom HTTP request headers based on domain patterns. Rules are stored as JSON in `chrome.storage.sync` and applied via the `declarativeNetRequest` API.
+Simple Header Editor is a cross-browser extension (Manifest V3) targeting **Chrome** and **Firefox** that injects custom HTTP request headers based on domain patterns. Rules are stored as JSON in `chrome.storage.sync` and applied via the `declarativeNetRequest` API.
 
-## No build step
+## Build step
 
-This is plain HTML/CSS/JS — no bundler, transpiler, package manager, or test framework. Load directly in Chrome via `chrome://extensions` → Developer mode → Load unpacked. Changes to source files take effect after reloading the extension on that page.
+The source is plain HTML/CSS/JS with no bundler, transpiler, package manager, or test framework. `build.sh` is a small bash file-copy script — not a real compiler.
+
+- `./build.sh chrome|firefox|all` produces `dist/<target>/` and a matching zip in `dist/`.
+- The build picks the right manifest (`manifest.chrome.json` or `manifest.firefox.json`) and renames it to `manifest.json` inside the dist folder.
+- Load `dist/chrome/` via `chrome://extensions` → Load unpacked, or `dist/firefox/manifest.json` via `about:debugging#/runtime/this-firefox` → Load Temporary Add-on. After editing sources, re-run `./build.sh` and reload.
+
+## Why two manifests?
+
+Chrome needs `background.service_worker`, Firefox needs `background.scripts`, and they reject each other's. The Firefox manifest also carries `browser_specific_settings.gecko.id` (required for `storage.sync`) and a `strict_min_version`. See README "Why two manifests?" for more.
 
 ## Architecture
 
